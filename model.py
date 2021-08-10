@@ -18,7 +18,7 @@ from typing import Union
 時刻K線圖：
 https://www.taifex.com.tw/cht/3/dlFutPrevious30DaysSalesData
 
-每日查詢：
+每天日K查詢：
 https://www.taifex.com.tw/cht/3/dlFutDailyMarketView
 https://mis.taifex.com.tw/futures/RegularSession/EquityIndices/FuturesDomestic/
 
@@ -169,13 +169,20 @@ class month_analysis():
     
     def download(self):
         url = 'https://www.taifex.com.tw/cht/3/dlFutDataDown'
+        final = -1
+        start = 0
+        while not self.date[-1][final]:
+            final +=-1
+        while not self.date[0][start]:
+            start += 1
         values = {
         'down_type': '1',
         'commodity_id': 'MTX',
         'commodity_id2':'', 
-        'queryStartDate': f'{self.year}/{self.month}/{self.date[0][0]}',
-        'queryEndDate': f'{self.year}/{self.month}/{self.date[-1][-1]}'
+        'queryStartDate': f'{self.year}/{self.month}/{self.date[0][start]}',
+        'queryEndDate': f'{self.year}/{self.month}/{self.date[-1][final]}'
         }
+        print(values)
         data = urllib.parse.urlencode(values)
         data = data.encode('ascii')
         request=r.Request(url,  headers={
@@ -183,18 +190,21 @@ class month_analysis():
              } ,data=data)
         with r.urlopen(request) as response:
             TradingData=response.read()
+        destination = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath('__file__'))))
         # file_name = f"{'~'.join(list(values.values())[-2:])}.csv".replace('/','')
         file_name = f'{self.month}.csv'
-        file_path = '.\\TradingData\\dayk'+'\\'+file_name
-        with open(file_path, 'wb') as f:
+        file_path = destination+'\\TradingData'+'\\dayk'
+        if not os.path.isdir(file_path):  
+            os.makedirs(file_path, exist_ok =True)
+        with open(file_path+'\\'+file_name, 'wb') as f:
             f.write(TradingData)
-        df = read(file_path)
+        df = read(file_path+'\\'+file_name)
         for i in df.columns:
             try:
                 df[i] = np.array([str(i).strip() for i in df[i].values])
             except TypeError:
                 pass
-        df.to_csv(file_path)
+        df.to_csv(file_path+'\\'+file_name)
     
     def chart(self, type:str='candle'):
         """

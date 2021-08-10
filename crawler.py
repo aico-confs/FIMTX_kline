@@ -1,10 +1,12 @@
 from model import InvestDataset, month_analysis
 
-# dataset = InvestDataset()
-# for i in dataset:
-    # print(i)
-    # dataset.download(i)
+dataset = InvestDataset()
+for i in dataset:
+    print(i)
+    dataset.download(i)
 
 test = month_analysis(1)
-# test.download()
-test.chart()
+for i in range(1,8):
+    test = month_analysis(i)
+    test.download()
+# test.chart()
