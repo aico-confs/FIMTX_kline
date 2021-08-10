@@ -166,6 +166,9 @@ class month_analysis():
         self.month = '{:0>2}'.format(month)
         self.year = year
         self.date = calendar.monthcalendar(year, month)
+        if not os.path.isdir(f'./TradingData/dayk/{self.month}.csv'):  
+            raise FileNotFoundError('必須先download()至指定資料夾，才能啟用模型功能')
+
     
     def download(self):
         url = 'https://www.taifex.com.tw/cht/3/dlFutDataDown'
