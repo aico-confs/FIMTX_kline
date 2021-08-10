@@ -133,7 +133,7 @@ class InvestDataset():
 
         data_name = file_name.replace('_', '').replace('2021', '')
         df.to_csv(Rawpath+'\\'+data_name.replace('Daily', 'Raw'), encoding='utf-8')
-        # search = 'MTX'
+        search = 'MTX'
         MTX_df= df.query('商品代號 == @search')
         MTX_df.to_csv(MTXpath+'\\'+data_name.replace('Daily', 'MTX'), encoding='utf-8')
 
