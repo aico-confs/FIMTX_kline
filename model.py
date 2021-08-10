@@ -166,8 +166,14 @@ class month_analysis():
         self.month = '{:0>2}'.format(month)
         self.year = year
         self.date = calendar.monthcalendar(year, month)
-        if not os.path.isdir(f'./TradingData/dayk/{self.month}.csv'):  
+
+        try:
+            pd.read_csv(f'./TradingData/dayk/{self.month}.csv')
+        except FileNotFoundError: 
             raise FileNotFoundError('必須先download()至指定資料夾，才能啟用模型功能')
+        else:
+            self.path = f'./TradingData/dayk/{self.month}.csv'
+
 
     
     def download(self):
@@ -277,3 +283,23 @@ class month_analysis():
         # oclh
 
         mpf.plot(df_adj_20d,type=type)
+    
+    def __add__(self, other):
+        all = []
+        try:
+            all = [pd.read_csv(self.path)]+[ pd.read_csv(other.path)]
+        except UnicodeDecodeError:
+            print(UnicodeDecodeError)
+            all = [read(self.path)] + [read(other.path)]
+
+        final= pd.concat(all)
+
+
+        for i in range(len(final.columns)-1, -1, -1):
+            try:
+                final[list(final.columns)[i]] = final[list(final.columns)[i-1]]
+            except Exception as e:
+                print(e)
+            if i == 0:
+                final.drop(columns=list(final.columns)[i], inplace=True)
+        return final
