@@ -1,0 +1,8 @@
+#忽略所有附檔名是.pyc的檔案
+*.pyc
+#忽略Jetbrains IDE產生的設定檔
+MUAI/.idea
+/.idea
+#忽略vscode IDE產生的設定檔
+MUAI/.vscode
+/.vscode
